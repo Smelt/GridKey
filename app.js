@@ -4,15 +4,18 @@ var bodyParser = require('body-parser');
 var request = require('request');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-var apiKey = 
+var apiKey = "";
 
+var d = { distance: "", duration: "" };
 
 app.get("/", function (req, res) {
+
     res.render("landing");
 });
 
-app.get("/campgrounds", function (req, res) {
-    res.render("campgrounds", { campgrounds: campgrounds });
+app.get("/landing", function (req, res) {
+    
+    res.render("landing", {d: d });
 });
 
 app.post("/results", function (req, res) {
@@ -29,14 +32,10 @@ app.post("/results", function (req, res) {
         }
         if (!error && response.statusCode == 200) {
             var results = JSON.parse(body);
-            console.log("You reading this?");
-            console.log(results);
-
-            res.send(results);
-
-        }
-        else{
-            console.log("nothing happening");
+            d.distance  = results.routes[0].legs[0].distance.text;
+            d.duration = results.routes[0].legs[0].duration.text;
+            var dateDistance = {distance: dis, duration: dur};
+            res.render("landing" , {d: d });
         }
     });
 
@@ -44,5 +43,5 @@ app.post("/results", function (req, res) {
 
 
 app.listen(3000, function () {
-    console.log("Yelp Camp Server has started");
+    console.log("GridKey Server has started");
 });
